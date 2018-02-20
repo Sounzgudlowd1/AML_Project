@@ -56,8 +56,7 @@ def get_weights_formatted():
     t_array = parse_t(t)
     return x_array, w_array, t_array
 
-def print_weights():
-    X, w, t = get_weights_formatted()
+def print_weights(X, w, t):
     with open('X.csv', 'w', newline = '') as csvfile:
         spamwriter = csv.writer(csvfile, delimiter=',',
                                 quotechar='|', quoting=csv.QUOTE_MINIMAL)

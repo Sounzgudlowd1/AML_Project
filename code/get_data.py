@@ -25,8 +25,10 @@ def read_data():
         qids.append(int(qid_string))
         
         #get x values
-        x = np.zeros(129)
-        x[128] = 1
+        x = np.zeros(128)
+        
+        #do we need a 1 vector?
+        #x[128] = 1
         for elt in temp[2:]:
             index = re.split(':', elt)
             x[int(index[0] )-1] = 1
