@@ -9,6 +9,7 @@ import get_data
 import numpy as np
 import math
 import read_model
+import common_utilities
 
 
 
@@ -45,6 +46,26 @@ def denominator(X, w, t):
 
 def p_y_given_x(X, y, w, t):
     return numerator(X, y, w, t) / denominator(X, w, t)
+
+def grad_wrt_wy(X, y, w, t):
+    gradient = np.zeros((26, 128))
+    probability_of_word = p_y_given_x(X, y, w, t) 
+    
+    #kind of a strange representation.  Need to calculate wy = ([ys = y] - p(y|x)) * xs
+    #which is equivilent to subtracting the probability of the word * xs from all wy
+    #then adding back 1 * Xs for the weight that is actually associated with Y.
+    for s in range(len(y)):
+        gradient -= probability_of_word * X[s]
+        gradient[y[s]] += X[s]
+
+        
+    return gradient
+    
+def total_grad(X, y, w, t):
+    gradient = np.zeros((26, 128))
+    for i in range(len(y)):
+        gradient += grad_wrt_wy(X[i], y[i], w, t)
+    return gradient
 
 
 def den_brute_force(X, w, t):
@@ -91,7 +112,10 @@ y_tot, X_tot = get_data.read_data_formatted()
 #get_weights.print_weights(X_tot[0], w, t)
 #t = np.zeros((26, 26))
 
-out_standard = denominator(X_tot[1], w, t)
-print(out_standard)
-print(p_y_given_x(X_tot[1], y_tot[1], w, t))
-print(p_y_given_x(X_tot[1], np.array([1, 1, 1, 1, 1, 1, 1, 1, 22]), w, t))
+#out_standard = denominator(X_tot[1], w, t)
+#print(out_standard)
+#print(p_y_given_x(X_tot[1], y_tot[1], w, t))
+#print(p_y_given_x(X_tot[1], np.array([1, 1, 1, 1, 1, 1, 1, 1, 22]), w, t))
+print(y_tot[7])
+#print(grad_wrt_wy(X_tot[7], y_tot[7], w, t))
+print(total_grad(X_tot, y_tot, w, t))

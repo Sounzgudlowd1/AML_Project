@@ -18,7 +18,8 @@ def read_data():
         temp = line.split()
         #get label
         label_string = temp[0]
-        y.append(int(label_string))
+        #normalizes y to 0...25 instead of 1...26
+        y.append(int(label_string) -1)
         
         #get qid
         qid_string = re.split(':', temp[1])[1]
@@ -52,6 +53,8 @@ def read_data_formatted():
         X_tot[current].append(X[i])
         
         if(i+ 1 < len(y) and qids[i] != qids[i + 1]):
+            y_tot[current] = np.array(y_tot[current])
+            X_tot[current] = np.array(X_tot[current])
             y_tot.append([])
             X_tot.append([])
             current = current + 1
