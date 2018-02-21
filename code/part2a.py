@@ -11,15 +11,8 @@ import math
 import read_model
 
 
-'''
-TODO: refactor for over and under flow issues
-implement gradient
-'''
 
-
-
-
-def exponent_sum(X, y, w, t):
+def numerator(X, y, w, t):
     tot = 0
     for s in range(len(y)):
         tot += np.inner(w[y[s]], X[s])
@@ -27,27 +20,31 @@ def exponent_sum(X, y, w, t):
             tot += t[y[s-1]][y[s]]
     return np.exp(tot)
 
+
+
 def denominator(X, w, t):
     word_len = len(X)
     M = np.zeros((word_len, 26))
     
-    for i in range(26):
-        M[0][i] = math.log(np.exp(np.inner(w[i], X[0])))
+    #initialize first row
+    M[0] = np.inner(w, X[0])
 
     
     #populate M letter by letter in the word
     for s in range(1, word_len):
         #now populate each column of this row
-        
         for cur_letter in range(26):
-            # sum over each letter of the previous row
-            letter_sum = 0
-            for prev_letter in range(26):
-                letter_sum += np.exp(M[s-1][prev_letter]) * ( np.exp(np.inner(w[cur_letter], X[s]) + t[prev_letter][cur_letter]  ))
-            M[s][cur_letter] = math.log(letter_sum)
+            t_vect = np.transpose(t)[cur_letter]
+            #create vector to store sum of all previous values + t[prev][cur] + inner product of w and X
+            temp = t_vect + M[s-1] + np.inner(w[cur_letter], X[s])
+            max_fact = np.max(temp)
+            temp = temp - max_fact
+            M[s][cur_letter] = max_fact + math.log(np.sum(np.exp(temp)))
     
     return np.sum(np.exp(M[-1]))
 
+def p_y_given_x(X, y, w, t):
+    return numerator(X, y, w, t) / denominator(X, w, t)
 
 
 def den_brute_force(X, w, t):
@@ -94,7 +91,7 @@ y_tot, X_tot = get_data.read_data_formatted()
 #get_weights.print_weights(X_tot[0], w, t)
 #t = np.zeros((26, 26))
 
-out_standard = denominator(X_tot[0][:3], w, t)
-out_brute_force = den_brute_force(X_tot[0][:3], w, t)
+out_standard = denominator(X_tot[1], w, t)
 print(out_standard)
-print(out_brute_force)
+print(p_y_given_x(X_tot[1], y_tot[1], w, t))
+print(p_y_given_x(X_tot[1], np.array([1, 1, 1, 1, 1, 1, 1, 1, 22]), w, t))
