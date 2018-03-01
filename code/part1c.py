@@ -99,12 +99,10 @@ def get_solution_from_M(M):
 
 #y, X = get_data.read_data_formatted()
 X, w, t = get_weights.get_weights_formatted()
-best_val, best_soln =  optimize_brute_force(X[:6], w, t)
-print(best_soln)
-print(best_val)
+#best_val, best_soln =  optimize_brute_force(X[:6], w, t)
+#print(best_soln)
+#print(best_val)
 
-M = optimize(X[:6], w, t)
+M = optimize(X[:3], w, t)
 
-
-print(get_solution_from_M(M))
 print(np.max(M))

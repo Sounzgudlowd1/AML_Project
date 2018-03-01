@@ -6,19 +6,28 @@ Created on Mon Feb 19 19:02:06 2018
 """
 
 import numpy as np
-import re
 
 
 def read_data():
     file = open('../data/model.txt', 'r') 
+    params = np.zeros(26*128 + 26*26)
+    for i, line in enumerate(file):
+        params[i] = line
+    return np.array(params)
+
+
+#you really shouldn't call these for production level code, just use the above function
+    #Mainly you just don't want to have separate vecotrs for each wy and tyy+1, it really just
+    #needs to be a giant vector of size 26*128+26^2 = 4004
+def split_w_t(params):
     w = np.zeros(128*26)
     t = np.zeros(26 *26)
     count = 0
-    for line in file:
+    for elt in params:
         if(count < 128 * 26):
-            w[count] =  line
+            w[count] =  elt
         else:
-            t[count - 128*26] = line
+            t[count - 128*26] = elt
         count += 1
     return w, t
 
@@ -40,7 +49,6 @@ def parse_t(t):
             count += 1
     return t_fin
 
-def get_w_and_t():
-    w, t = read_data()
-
+def get_w_and_t(params):
+    w, t = split_w_t(params)
     return parse_w(w), parse_t(t)

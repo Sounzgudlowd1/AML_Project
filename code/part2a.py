@@ -10,7 +10,8 @@ import numpy as np
 import math
 import read_model
 import common_utilities
-
+from scipy.optimize import check_grad
+import time
 
 
 def numerator(X, y, w, t):
@@ -37,17 +38,31 @@ def denominator(X, w, t):
         for cur_letter in range(26):
             t_vect = np.transpose(t)[cur_letter]
             #create vector to store sum of all previous values + t[prev][cur] + inner product of w and X
-            temp = t_vect + M[s-1] + np.inner(w[cur_letter], X[s])
+            temp = M[s-1] + np.inner(w[cur_letter], X[s]) + t_vect
             max_fact = np.max(temp)
             temp = temp - max_fact
             M[s][cur_letter] = max_fact + math.log(np.sum(np.exp(temp)))
-    
+
+    print(M[1][0])  
+    print(M[0][0])
     return np.sum(np.exp(M[-1]))
 
 def p_y_given_x(X, y, w, t):
     return numerator(X, y, w, t) / denominator(X, w, t)
 
-def grad_wrt_wy(X, y, w, t):
+def log_p_y_given_x(params):
+    y_tot, X_tot = get_data.read_data_formatted()
+    X = X_tot[0]
+    y = y_tot[0]
+    w, t = read_model.get_w_and_t(params)
+    return math.log(numerator(X, y, w, t) / denominator(X, w, t))
+
+def grad_wrt_wy(params):
+    y_tot, X_tot = get_data.read_data_formatted()
+    X = X_tot[0]
+    y = y_tot[0]
+    w, t = read_model.get_w_and_t(params)
+    
     gradient = np.zeros((26, 128))
     probability_of_word = p_y_given_x(X, y, w, t) 
     
@@ -106,16 +121,15 @@ def den_brute_force(X, w, t):
     return final_sum
 
 
-w, t = read_model.get_w_and_t()
 
-y_tot, X_tot = get_data.read_data_formatted()
+
 #get_weights.print_weights(X_tot[0], w, t)
 #t = np.zeros((26, 26))
+params = read_model.read_data()
+#params = np.ones(128*26 + 26 **2)
+w, t = read_model.get_w_and_t(params)
 
-#out_standard = denominator(X_tot[1], w, t)
-#print(out_standard)
-#print(p_y_given_x(X_tot[1], y_tot[1], w, t))
-#print(p_y_given_x(X_tot[1], np.array([1, 1, 1, 1, 1, 1, 1, 1, 22]), w, t))
-print(y_tot[7])
-#print(grad_wrt_wy(X_tot[7], y_tot[7], w, t))
-print(total_grad(X_tot, y_tot, w, t))
+y_tot, X_tot = get_data.read_data_formatted()
+
+#print(numerator(X_tot[0], y_tot[0], w, t))
+print(denominator(X[0], w, t))
