@@ -63,7 +63,14 @@ def read_data_formatted():
             
 
 
-
+#parameter set for 2a
+def get_params():
+    
+    file = open('../data/model.txt', 'r') 
+    params = []
+    for i, elt in enumerate(file):
+        params.append(float(elt))
+    return np.array(params)
 
 
 
