@@ -35,7 +35,10 @@ def forward_propogate(params, X, label, position):
         for j in range(26):
             t_start = 128 *26 + 26 * j
             t_end = 128 *26 + 26 * (j + 1)
-            M[i][j] =  np.log(np.sum(np.exp(M[i-1] + params[t_start: t_end])))+ np.inner(X_P[i], mask[j])
+            vect = M[i-1] + params[t_start: t_end]
+            max_vect = np.max(vect)
+            vect -= max_vect
+            M[i][j] =  max_vect + np.log(np.sum(np.exp(vect)))+ np.inner(X_P[i], mask[j])
     
     t_start = 128 *26 + 26 * label
     t_end = 128 *26 + 26 * (label + 1)
@@ -64,8 +67,10 @@ def back_propogate(params, X, label, position):
         for j in range(26):
             t_start = 128 * 26 + j * 26
             t_end = 128 * 26 + (j + 1) * 26
-            M[i + 1][j] =  np.log(np.sum(np.exp(M[i] + params[t_start: t_end])))+ np.inner(x, mask[j])
-
+            vect = M[i] + params[t_start: t_end]
+            max_vect = np.max(vect)
+            vect -= max_vect
+            M[i + 1][j] =  max_vect + np.log(np.sum(np.exp(vect)))+ np.inner(x, mask[j])
     return np.log(np.sum(np.exp(M[-1])))  
     
 def numerator_letter(params, X, label, position):
@@ -129,14 +134,17 @@ def denominator(params, X):
         for j in range(26):
             t_start = 128 * 26 + j * 26
             t_end = 128 * 26 + (j + 1) * 26
-            M[i][j] = np.log(np.sum(np.exp(M[i-1] + params[t_start: t_end]))) + np.inner(X_P[i], mask[j])
+            vect = M[i-1] + params[t_start: t_end]
+            vect_max = np.max(vect)
+            vect = vect - vect_max
+            M[i][j] = vect_max + np.log(np.sum(np.exp(vect))) + np.inner(X_P[i], mask[j])
         
     return np.sum(np.exp(M[-1]))
 
 def log_p_y_given_x(params, X, y):
     return np.log(numerator(params, X, y)/denominator(params, X))
 
-
+#BRUTE FORCE Calculations NOT USED IN PROD CODE
 def value_of_y(params, X, y):
     mask = gd.get_mask()
     running_total = np.inner(X[0] * params, mask[y[0]])
@@ -193,30 +201,38 @@ def num_letter_pair_bf(params, X, letter1, letter2, position):
     for i in range(26):
         y[2] = i
         total += value_of_y(params, X, y)
-    return total            
-
+    return total        
+    
+def get_params():
+    file = open('../data/model.txt', 'r') 
+    params = []
+    for i, elt in enumerate(file):
+        params.append(float(elt))
+    return np.array(params)
+        
+        
+        
+        
 #params = np.ones(128*26 + 26 ** 2)
-temp, params = p1c.get_weights()
-#X, y = gd.get_xy()
+params = get_params()
+#X_test, y_test = gd.get_xy()
 start = time.time()
 
-print(check_grad(log_p_y_given_x, gradient, params, X[1], y[1]))
+#print(check_grad(log_p_y_given_x, gradient, params, X_test[0], y_test[0]))
+#print(forward_propogate(params, X_test[1], 0, 4))
 
-
-#print(numerator_letter_pair(params, X[0], 16, 4, 0))
-#print(num_letter_pair_bf(params, X[0], 16, 4, 0))
-
+print(log_p_y_given_x(params, X_test[1], y_test[1]))
 '''
-den = denominator(params, X[1])
-for k in range(len(X[1]) -1):
-    total = 0
-    for i in range(26):
-        for j in range(26):
-            factor = numerator_letter_pair(params, X[1], i, j, k)/ den
-            total += factor
-    print("total")
-    print(total)
+gradient_tot = 0
+for k in range(len(X)):
+    print(k)
+    gradient_tot += gradient(params, X[k], y[k])
+
+gradient_tot = gradient_tot / len(X)
+
+with open("part2a.txt", "w") as text_file:
+    for i, elt in enumerate(gradient_tot):
+        text_file.write(str(elt))
+        text_file.write("\n")
 '''
-
-
 print("Total time:" + str(time.time() - start))
