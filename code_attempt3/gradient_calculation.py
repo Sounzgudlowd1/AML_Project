@@ -46,16 +46,6 @@ def back_propogate(w_x, t):
             M[i][j] = vect_max +np.log(np.sum(np.exp(vect + w_x[i+1]))) 
     return M
 
-def num_letter_pair(w_x, t, f_mess, b_mess, position, letter1, letter2 ):
-    factor = 0
-    if(position > 0):
-        factor += f_mess[position][letter1] 
-    if(position < len(w_x) - 2):
-        factor += b_mess[position + 1][letter2]
-    if(letter1 == 0 and letter2 == 0):
-        print("W1 : ")
-        print( w_x[position][letter1] + t[letter2][letter1] + w_x[position+1][letter2])
-    return np.exp(factor + t[letter2][letter1] + w_x[position][letter1] + w_x[position+1][letter2])
 
 def num_letter(w_x, f_mess, b_mess, position, letter):
     factor = 0
