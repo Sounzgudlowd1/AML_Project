@@ -5,20 +5,16 @@ Created on Fri Mar  2 13:25:34 2018
 @author: Erik
 """
 import numpy as np
-import time
 
-def forward_propogate(w_x, t, position):
-    #can't forward propogate to positino 0
-    if position == 0:
-        return 0
-    
+def forward_propogate(w_x, t):
+    word_len = len(w_x)
     #establish matrix to hold results
-    M = np.zeros((position, 26))
+    M = np.zeros((word_len, 26))
     #set first row to inner <wa, x0> <wb, x0>...
     M[0] = w_x[0]
     
     #iterate through length of word
-    for i in range(1, position):
+    for i in range(1, word_len):
         #iterate through each letter
         for j in range(26):
             #remember t[a] = [taa, tba, tca...] so this returns all previous values for the current value + the previous row
@@ -29,79 +25,55 @@ def forward_propogate(w_x, t, position):
             vect = vect - vect_max
             #finally set the ith word position and jth letter to the max plus the log of the vector plus the current word's value
             M[i][j] = vect_max + np.log(np.sum(np.exp(vect))) + w_x[i][j]
-    return M[-1]
+    return M
 
-def back_propogate(w_x, t, position):
-    #this works but could be clearer
-    
+def back_propogate(w_x, t):
     #get the index of the final letter of the word
     fin_index = len(w_x) - 1
-    
-    #can't back propogate to the final letter, so return if nothing
-    if position == fin_index:
-        return 0 
-    
+
     #only need to go from the end to stated position
-    M = np.zeros((fin_index - position, 26))
+    M = np.zeros((len(w_x), 26))
     #now we need taa, tab, tac... because we are starting at the end and working backwards
     #which is exactly the transposition of the t matrix
     t_trans = t.transpose()
     
     #initialize with wa Xfinal, wb Xfinal...
-    M[0] = w_x[fin_index]
-    #used to tract position in M matrix
-    cur = 0
-    for i in range(fin_index - position -1, 0, -1):
+    M[fin_index] = w_x[fin_index]
+    for i in range(fin_index -1, -1, -1):
         for j in range(26):
-            #very similar to forward propigation, get the M[i-1th] row and add the tranposition term
-            #so this is something like Xfin wa + taa + Xfin wb + tab... if I am currently working on the letter 'a'
-            vect = M[cur] + t_trans[j]
-            #same tricks for numerical robustnesss
+            vect = M[i + 1] + t_trans[j]
             vect_max = np.max(vect)
             vect = vect - vect_max
-            #indices are a ltttle cluttered but functionally the same as forward propogation
-            M[cur + 1][j] = vect_max +np.log(np.sum(np.exp(vect))) + w_x[fin_index - cur - 1][j]
-        cur += 1
-    #return final row.  This makes no assumptions on the value of the letter at the stated position
-    return M[-1]
+            M[i][j] = vect_max +np.log(np.sum(np.exp(vect))) + w_x[i][j]
+    return M
 
-def numerator_letter(w_x, t, forward_messages, back_messages, letter, position):
-    #figure out the numerator for an 'a' being at position 3 for instance
-    
-    #translate messages for this letter
-    
+def num_letter_pair(w_x, t, f_mess, b_mess, position, letter1, letter2 ):
     factor = 0
+    if(position > 0):
+        factor += f_mess[position][letter1] 
     
-    #determine if its the first letter of word, last letter or somewhere in the middle
-    #if first or last need to ignore forward and backward message respectively
-    if position > 0:
-        left = forward_messages[position] + t[letter]    
-        factor += np.log(np.sum(np.exp(left)))
+    if(position < len(w_x) - 2):
+        factor += b_mess[position + 1][letter2]
     
-    if position < len(w_x) -1:
-        right = back_messages[position] + t.transpose()[letter]
-        factor += np.log(np.sum(np.exp(right)))
+    if(position == 0):
+        factor += w_x[position][letter1]
     
-    return np.exp(factor + w_x[position][letter])
-    
+    if(position == len(w_x) - 2):
+        factor += w_x[position + 1][letter2]
+        
+    return np.sum(np.exp(factor + t[letter2][letter1]))
 
-def numerator_letter_pair(w_x, t, forward_message, back_message, letter1, letter2, position):
-    #this determines the numerator for 'kz' being in position 4 for instance
-    
-    #get left message and add t to it
-    
+def num_letter(w_x, f_mess, b_mess, position, letter):
     factor = 0
-    #if this is the end of the word ignore right message
-    if position < len(w_x) - 2:
-        right = back_message[position+1] + t.transpose()[letter2]
-        factor += np.log(np.sum(np.exp(right)))
+    if(position > 0):
+        factor += f_mess[position][letter]
     
-    if position > 0:
-        left = forward_message[position] + t[letter1]
-        factor += np.log(np.sum(np.exp(left)))
-    
-    #now return the factor so far + wletter1 xposition + wletter2 Xposition + 1 + the transition from letter1 to letter2 
-    return np.exp(factor + w_x[position][letter1] + w_x[position + 1][letter2] + t[letter2][letter1] )
+    if(position < len(w_x) -1):
+        factor += b_mess[position][letter]
+        
+    if(position > 0 and position < len(w_x) - 1):
+        factor -= w_x[position][letter]
+    return np.sum(np.exp(factor))
 
 def numerator(y, w_x, t):
     #full numerator for an entire word
@@ -118,20 +90,7 @@ def numerator(y, w_x, t):
 
 def denominator(w_x, t):
     #this is  eassy, just forward propogate to the end of the word and return the sum of the exponentials
-    return np.sum(np.exp(forward_propogate(w_x, t, len(w_x))))
-
-
-def get_messages(w_x, t):
-    #this just pre-calculates the messages for each position of the word
-    #later you can reference the precalculated values with extreme reduction of runtime
-    f_messages = []
-    b_messages = []
-    for i in range(len(w_x)):
-        f_messages.append(forward_propogate(w_x, t, i))
-        b_messages.append(back_propogate(w_x, t, i))
-    return f_messages, b_messages        
-
-       
+    return np.sum(np.exp(forward_propogate(w_x, t)[-1]))       
 
 
 #split up params into w and t.  Note that this only needs to happen once per word!!! do not calculate per letter
@@ -162,7 +121,7 @@ def grad_wrt_wy(X, y, w_x, t, f_mess, b_mess, den):
         for j in range(len(X)):
             if(y[j] == i):
                 gradient[start: end] += X[j]
-            gradient[start : end] -= numerator_letter(w_x, t, f_mess, b_mess, i, j) / den * X[j]
+            gradient[start : end] -= num_letter(w_x, f_mess, b_mess, j, i) / den * X[j]
             
     return gradient
     
@@ -177,12 +136,13 @@ def grad_wrt_t(y, w_x, t, f_mess, b_mess, den):
             for k in range(len(w_x) - 1):
                 if(y[k] == i and y[k+1] == j):
                     gradient[t_index] += 1
-                gradient[t_index] -= numerator_letter_pair(w_x, t, f_mess, b_mess, i, j, k) / den
+                gradient[t_index] -= num_letter_pair(w_x, t, f_mess, b_mess, k, i, j) / den
     return gradient
 
 def gradient_word(X, y, w, t, word_num):
     w_x = np.inner(X[word_num], w)
-    f_mess, b_mess = get_messages(w_x, t)
+    f_mess = forward_propogate(w_x, t)
+    b_mess = back_propogate(w_x, t)
     den = denominator(w_x, t)
     wy_grad = grad_wrt_wy(X[word_num], y[word_num], w_x, t, f_mess, b_mess, den)
     t_grad = grad_wrt_t(y[word_num], w_x, t, f_mess, b_mess, den)

@@ -53,29 +53,55 @@ def back_propogate(w_x, t):
     return M
 
 def num_letter_pair(w_x, t, f_mess, b_mess, position, letter1, letter2 ):
-    return np.sum(np.exp(f_mess[position][letter1] 
-                         + b_mess[position + 1][letter2] 
-                         + t[letter2][letter1]))
+    factor = 0
+    if(position > 0):
+        factor += f_mess[position][letter1] 
+    
+    if(position < len(w_x) - 2):
+        factor += b_mess[position + 1][letter2]
+    
+    if(position == 0):
+        factor += w_x[position][letter1]
+    
+    if(position == len(w_x) - 2):
+        factor += w_x[position + 1][letter2]
+        
+    return np.sum(np.exp(factor + t[letter2][letter1]))
 
 def num_letter(w_x, f_mess, b_mess, position, letter):
-    return np.sum(np.exp(
-            f_mess[position][letter] + 
-            b_mess[position][letter]
-            - w_x[position][letter]))
+    factor = 0
+    if(position > 0):
+        factor += f_mess[position][letter]
+    
+    if(position < len(w_x) -1):
+        factor += b_mess[position][letter]
+        
+    if(position > 0 and position < len(w_x) - 1):
+        factor -= w_x[position][letter]
+    return np.sum(np.exp(factor))
 
+def denominator(w_x, t):
+    return np.sum(np.exp(forward_propogate(w_x, t)[-1]))
 
 X, y = gd.read_data_formatted()
 params = gd.get_params()
 
+'''
 w = gc.w_matrix(params)
-w_x = np.inner( X[1], w)
+w_x = np.inner( X[1][:1], w)
 t = gc.t_matrix(params)
 f_mess, b_mess = gc.get_messages(w_x, t)
 den = gc.denominator(w_x, t)
+'''
 
 
-
-
-b_mess_tot = back_propogate(w_x, t)
 f_mess_tot = forward_propogate(w_x, t)
-print(num_letter(w_x, f_mess_tot, b_mess_tot, 4, 0))
+b_mess_tot = back_propogate(w_x, t)
+
+'''
+print(num_letter_pair(w_x, t, f_mess_tot, b_mess_tot, 0, 3, 25))
+
+
+print(gc.numerator_letter_pair(w_x, t, f_mess, b_mess, 3, 25, 0))
+'''
+print(check_grad(gc.avg_log_p_y_given_x, gc.avg_gradient, params, X, y, 5))

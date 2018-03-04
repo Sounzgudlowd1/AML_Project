@@ -41,6 +41,6 @@ def timed_gradient_calculation(params, X, y):
 X, y = gd.read_data_formatted()
 params = gd.get_params()
 
-check_gradient(params, X, y)
+#check_gradient(params, X, y)
 
-#timed_gradient_calculation(params, X, y)
+timed_gradient_calculation(params, X, y)
