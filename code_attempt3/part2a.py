@@ -30,17 +30,17 @@ def timed_gradient_calculation(params, X, y):
     print("Total time:")
     print(time() - start)
     
-    
+    '''
     with open("part2a.txt", "w") as text_file:
         for i, elt in enumerate(av_grad):
             text_file.write(str(elt))
             text_file.write("\n")
-
+    '''
 
 
 X, y = gd.read_data_formatted()
 params = gd.get_params()
 
-#check_gradient(params, X, y)
+check_gradient(params, X, y)
 
-timed_gradient_calculation(params, X, y)
+#timed_gradient_calculation(params, X, y)

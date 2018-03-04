@@ -10,98 +10,40 @@ import get_data as gd
 import numpy as np
 from scipy.optimize import check_grad
 
-
-def forward_propogate(w_x, t):
-    word_len = len(w_x)
-    #establish matrix to hold results
-    M = np.zeros((word_len, 26))
-    #set first row to inner <wa, x0> <wb, x0>...
-    M[0] = w_x[0]
-    
-    #iterate through length of word
-    for i in range(1, word_len):
-        #iterate through each letter
+def grad_wrt_t(y, w_x, t, f_mess, b_mess, den):
+    gradient = np.zeros(26 * 26)
+    for i in range(2):
         for j in range(26):
-            #remember t[a] = [taa, tba, tca...] so this returns all previous values for the current value + the previous row
-            vect = M[i-1]+ t[j]
-            #get max
-            vect_max = np.max(vect)
-            #subtract max from vector
-            vect = vect - vect_max
-            #finally set the ith word position and jth letter to the max plus the log of the vector plus the current word's value
-            M[i][j] = vect_max + np.log(np.sum(np.exp(vect))) + w_x[i][j]
-    return M
-
-def back_propogate(w_x, t):
-    #get the index of the final letter of the word
-    fin_index = len(w_x) - 1
-
-    #only need to go from the end to stated position
-    M = np.zeros((len(w_x), 26))
-    #now we need taa, tab, tac... because we are starting at the end and working backwards
-    #which is exactly the transposition of the t matrix
-    t_trans = t.transpose()
+            gradient[j * 26 : (j + 1) * 26] -= np.exp(w_x[i] + t[j] + w_x[i + 1][j] +b_mess[i + 1][j] + f_mess[i])
     
-    #initialize with wa Xfinal, wb Xfinal...
-    M[fin_index] = w_x[fin_index]
-    for i in range(fin_index -1, -1, -1):
-        for j in range(26):
-            vect = M[i + 1] + t_trans[j]
-            vect_max = np.max(vect)
-            vect = vect - vect_max
-            M[i][j] = vect_max +np.log(np.sum(np.exp(vect))) + w_x[i][j]
-    return M
-
-def num_letter_pair(w_x, t, f_mess, b_mess, position, letter1, letter2 ):
-    factor = 0
-    if(position > 0):
-        factor += f_mess[position][letter1] 
-    
-    if(position < len(w_x) - 2):
-        factor += b_mess[position + 1][letter2]
-    
-    if(position == 0):
-        factor += w_x[position][letter1]
-    
-    if(position == len(w_x) - 2):
-        factor += w_x[position + 1][letter2]
+    gradient /= den
+                
+    for i in range(len(w_x) - 1):
+        t_index = y[i]
+        t_index += 26 * y[i+1]
+        gradient[t_index] += 1        
         
-    return np.sum(np.exp(factor + t[letter2][letter1]))
-
-def num_letter(w_x, f_mess, b_mess, position, letter):
-    factor = 0
-    if(position > 0):
-        factor += f_mess[position][letter]
-    
-    if(position < len(w_x) -1):
-        factor += b_mess[position][letter]
         
-    if(position > 0 and position < len(w_x) - 1):
-        factor -= w_x[position][letter]
-    return np.sum(np.exp(factor))
+    return gradient
 
-def denominator(w_x, t):
-    return np.sum(np.exp(forward_propogate(w_x, t)[-1]))
 
 X, y = gd.read_data_formatted()
 params = gd.get_params()
 
-'''
+
 w = gc.w_matrix(params)
-w_x = np.inner( X[1][:1], w)
+w_x = np.inner( X[1][:3], w)
 t = gc.t_matrix(params)
-f_mess, b_mess = gc.get_messages(w_x, t)
-den = gc.denominator(w_x, t)
-'''
+f_mess = gc.forward_propogate(w_x, t)
+b_mess = gc.back_propogate(w_x, t)
+den = gc.denominator(f_mess, w_x)
+
+true_grad = gc.grad_wrt_t(y[1][:3], w_x, t, f_mess, b_mess, den) 
+print(true_grad[0])
 
 
-f_mess_tot = forward_propogate(w_x, t)
-b_mess_tot = back_propogate(w_x, t)
-
-'''
-print(num_letter_pair(w_x, t, f_mess_tot, b_mess_tot, 0, 3, 25))
+test_grad = grad_wrt_t(y[1][:3], w_x, t, f_mess, b_mess, den) 
+print(test_grad[0])
+# + ))
 
 
-print(gc.numerator_letter_pair(w_x, t, f_mess, b_mess, 3, 25, 0))
-'''
-print(check_grad(gc.avg_log_p_y_given_x, gc.avg_gradient, params, X, y, 5))
