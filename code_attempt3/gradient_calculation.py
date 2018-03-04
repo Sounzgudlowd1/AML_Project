@@ -69,17 +69,18 @@ def numerator_letter(w_x, t, forward_messages, back_messages, letter, position):
     #figure out the numerator for an 'a' being at position 3 for instance
     
     #translate messages for this letter
-    left = forward_messages[position] + t[letter]
-    right = back_messages[position] + t.transpose()[letter]
+    
+    factor = 0
     
     #determine if its the first letter of word, last letter or somewhere in the middle
     #if first or last need to ignore forward and backward message respectively
-    if position == 0:
-        factor = np.log(np.sum(np.exp(right)))
-    elif position == len(w_x) -1:
-        factor = np.log(np.sum(np.exp(left)))
-    else: 
-        factor = np.log(np.sum(np.exp(left))) + np.log(np.sum(np.exp(right)))
+    if position > 0:
+        left = forward_messages[position] + t[letter]    
+        factor += np.log(np.sum(np.exp(left)))
+    
+    if position < len(w_x) -1:
+        right = back_messages[position] + t.transpose()[letter]
+        factor += np.log(np.sum(np.exp(right)))
     
     return np.exp(factor + w_x[position][letter])
     
@@ -88,18 +89,16 @@ def numerator_letter_pair(w_x, t, forward_message, back_message, letter1, letter
     #this determines the numerator for 'kz' being in position 4 for instance
     
     #get left message and add t to it
-    left = forward_message[position] + t[letter1]
-
+    
+    factor = 0
     #if this is the end of the word ignore right message
-    if position == len(w_x) - 2:
-        factor = np.log(np.sum(np.exp(left)))
-    else:
-        #Since it is not the end of the word then it is possible to comput the right message + transpose of t
+    if position < len(w_x) - 2:
         right = back_message[position+1] + t.transpose()[letter2]
-        if position == 0:
-            factor = np.log(np.sum(np.exp(right)))
-        else: 
-            factor = np.log(np.sum(np.exp(left))) + np.log(np.sum(np.exp(right)))
+        factor += np.log(np.sum(np.exp(right)))
+    
+    if position > 0:
+        left = forward_message[position] + t[letter1]
+        factor += np.log(np.sum(np.exp(left)))
     
     #now return the factor so far + wletter1 xposition + wletter2 Xposition + 1 + the transition from letter1 to letter2 
     return np.exp(factor + w_x[position][letter1] + w_x[position + 1][letter2] + t[letter2][letter1] )
