@@ -8,8 +8,8 @@ import numpy as np
 import re
 
 
-def read_data():
-    file = open('../data/train_struct.txt', 'r') 
+def read_data(file_name):
+    file = open('../data/' + file_name + '_struct.txt', 'r') 
     y = []
     qids = []
     X = []
@@ -38,9 +38,9 @@ def read_data():
     qids = np.array(qids)
     return y, qids, X
 
-def read_data_formatted():
+def read_data_formatted(file_name):
     #get initial output
-    y, qids, X = read_data()
+    y, qids, X = read_data(file_name)
     y_tot = []
     X_tot = []
     current = 0;

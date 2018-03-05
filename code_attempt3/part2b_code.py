@@ -25,10 +25,10 @@ def grad_func(params, X, y, C):
     return -C/len(X) * grad_sum + grad_reg
     
 
-def optimize(params, X, y, name):
+def optimize(params, X, y, C, name):
 
     start = time()
-    out = fmin_bfgs(func_to_minimize, params, grad_func, (X, y, 1000))
+    out = fmin_bfgs(func_to_minimize, params, grad_func, (X, y, C))
     print("Total time: ", end = '')
     print(time() - start)
     
@@ -51,4 +51,3 @@ def get_optimal_params():
         params.append(float(elt))
     return np.array(params)
 
-def predict(params, X):

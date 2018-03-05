@@ -6,7 +6,6 @@ Created on Sat Feb 17 21:06:02 2018
 """
 
 #import common_utilities
-import get_weights
 import numpy as np
 from copy import deepcopy
 
@@ -24,8 +23,8 @@ def optimize(X, w, t):
         
         #go column wise, populating the best sum of the previous + T[previous letter][
         for cur_letter in range(26):
-            #initialize with feasible solution of previous letter = a and this letter = a
-            best = M[row - 1][0] + np.inner(X[row], w[0])
+            #initialize with giant negative number
+            best = -99999999999999
             
             #iterate over all values of the previous letter, fixing the current letter
             for prev_letter in range(26):
@@ -74,7 +73,7 @@ def optimize_brute_force(X, w, t):
     return best, best_solution
 
 
-def get_solution_from_M(M):
+def get_solution_from_M(M, X, w, t):
     solution = []
     cur_word_pos = len(M) - 1
     prev_word_pos = cur_word_pos - 1
@@ -92,7 +91,7 @@ def get_solution_from_M(M):
                 cur_val = M[cur_word_pos][cur_letter]
                 break
         
-    return solution
+    return np.array(solution)
         
 def get_weights():
     file = open('../data/decode_input.txt', 'r') 
@@ -143,17 +142,4 @@ def get_weights_formatted():
     t_array = parse_t(t)
     return x_array, w_array, t_array
 
-#y, X = get_data.read_data_formatted()
-X, w, t = get_weights_formatted()
-#best_val, best_soln =  optimize_brute_force(X[:6], w, t)
-#print(best_soln)
-#print(best_val)
 
-M = optimize(X, w, t)
-print(np.max(M))
-soln = get_solution_from_M(M)
-
-with open("../result/decode_output.txt", "w") as text_file:
-    for i, elt in enumerate(soln):
-        text_file.write(str(elt + 1))
-        text_file.write("\n")
