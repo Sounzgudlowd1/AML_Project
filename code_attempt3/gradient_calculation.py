@@ -157,33 +157,29 @@ def gradient_word(X, y, w, t, word_num):
     
     return np.concatenate((wy_grad, t_grad))
     
-def avg_gradient(params, X, y, up_to_index):
+def gradient_sum(params, X, y, up_to_index):
     w = w_matrix(params)
     t = t_matrix(params)
         
-    count = 0
     total = np.zeros(128 * 26 + 26 ** 2)
     for i in range(up_to_index):
         total += gradient_word(X, y, w, t, i)
-        count += 1
-    return total / count        
+    return total      
         
 def log_p_y_given_x(w_x, y, t, word_num):
     f_mess = forward_propogate(w_x, t)
     return np.log(numerator(y, w_x, t) / denominator(f_mess, w_x))
 
 
-def avg_log_p_y_given_x(params, X, y, up_to_index):
+def log_p_y_given_x_sum(params, X, y, up_to_index):
     w = w_matrix(params)
     t = t_matrix(params)
         
-    count = 0
     total = 0
     for i in range(up_to_index):
         w_x = np.inner(X[i], w)
-        count += 1
         total += log_p_y_given_x(w_x, y[i], t, i)
-    return  total / count
+    return  total
 
 
 

@@ -19,18 +19,19 @@ def check_gradient(params, X, y):
             gc.avg_gradient, 
             params, X, y, 20))
     
-    
+def avg_log_prob(params, X, y):
+    return gc.log_p_y_given_x_sum(params, X, y, len(X)) / len(X)    
 
 
 def timed_gradient_calculation(params, X, y):
     #this takes 621 seconds for me (10 min 21 seconds)
     start = time()
-    av_grad = gc.avg_gradient(params, X, y, len(X))
+    av_grad = gc.gradient_sum(params, X, y, len(X))/len(X)
     print("Total time:")
     print(time() - start)
     
     
-    with open("part2a.txt", "w") as text_file:
+    with open("../result/gradient.txt", "w") as text_file:
         for i, elt in enumerate(av_grad):
             text_file.write(str(elt))
             text_file.write("\n")
@@ -45,3 +46,4 @@ params = gd.get_params()
 #check_gradient(params, X, y)
 
 timed_gradient_calculation(params, X, y)
+print(avg_log_prob(params, X, y))
