@@ -16,7 +16,13 @@ params = gd.get_params()
 X, y = gd.read_data_formatted()
 
 start = time()
-out = fmin_bfgs(gc.avg_log_p_y_given_x, params, gc.avg_gradient, (X, y, len(X)), maxiter = 1)
+out = fmin_bfgs(gc.neg_avg_log_p_y_given_x, params, gc.avg_gradient, (X, y, len(X), 1000), maxiter = 1)
+print("Total time: ", end = '')
+print(time() - start)
+
+
+start = time()
+out = fmin_bfgs(gc.neg_avg_log_p_y_given_x, params, gc.avg_gradient, (X, y, len(X), 1000), maxiter = 2)
 print("Total time: ", end = '')
 print(time() - start)
 

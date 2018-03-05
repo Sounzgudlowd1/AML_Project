@@ -17,7 +17,7 @@ def check_gradient(params, X, y):
     print(check_grad(
             gc.avg_log_p_y_given_x, 
             gc.avg_gradient, 
-            params, X, y, 1))
+            params, X, y, 5))
     
     
 
