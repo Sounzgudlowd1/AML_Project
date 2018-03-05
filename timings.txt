@@ -1,0 +1,139 @@
+w_x time : 0.0010030269622802734
+f_prop_time : 0.0
+b_prop_time : 0.0
+den_time : 0.0
+grad_wy time : 0.0010006427764892578
+grad_t time : 0.001001596450805664
+
+w_x time : 0.0
+f_prop_time : 0.0020036697387695312
+b_prop_time : 0.0010013580322265625
+den_time : 0.0
+grad_wy time : 0.0030028820037841797
+grad_t time : 0.003004789352416992
+
+w_x time : 0.0
+f_prop_time : 0.0010035037994384766
+b_prop_time : 0.0
+den_time : 0.0
+grad_wy time : 0.0010018348693847656
+grad_t time : 0.0
+
+w_x time : 0.0
+f_prop_time : 0.0010035037994384766
+b_prop_time : 0.002003192901611328
+den_time : 0.0
+grad_wy time : 0.003001689910888672
+grad_t time : 0.003004312515258789
+
+w_x time : 0.0
+f_prop_time : 0.0010037422180175781
+b_prop_time : 0.0010018348693847656
+den_time : 0.0
+grad_wy time : 0.0030019283294677734
+grad_t time : 0.003004312515258789
+
+w_x time : 0.0
+f_prop_time : 0.0
+b_prop_time : 0.0010030269622802734
+den_time : 0.0
+grad_wy time : 0.0030007362365722656
+grad_t time : 0.0020029544830322266
+
+w_x time : 0.0
+f_prop_time : 0.0010037422180175781
+b_prop_time : 0.0
+den_time : 0.0010035037994384766
+grad_wy time : 0.0010004043579101562
+grad_t time : 0.0010020732879638672
+
+w_x time : 0.0010063648223876953
+f_prop_time : 0.0009980201721191406
+b_prop_time : 0.001001119613647461
+den_time : 0.0
+grad_wy time : 0.0030040740966796875
+grad_t time : 0.003004789352416992
+
+w_x time : 0.001004934310913086
+f_prop_time : 0.0
+b_prop_time : 0.0010020732879638672
+den_time : 0.0
+grad_wy time : 0.0011415481567382812
+grad_t time : 0.0009975433349609375
+
+w_x time : 0.0
+f_prop_time : 0.0018658638000488281
+b_prop_time : 0.0020024776458740234
+den_time : 0.0
+grad_wy time : 0.006006002426147461
+grad_t time : 0.006009101867675781
+
+w_x time : 0.0
+f_prop_time : 0.0020058155059814453
+b_prop_time : 0.0010013580322265625
+den_time : 0.0
+grad_wy time : 0.003001689910888672
+grad_t time : 0.002003908157348633
+
+w_x time : 0.0
+f_prop_time : 0.0
+b_prop_time : 0.0010037422180175781
+den_time : 0.0
+grad_wy time : 0.0020012855529785156
+grad_t time : 0.0010030269622802734
+
+w_x time : 0.0010020732879638672
+f_prop_time : 0.0010008811950683594
+b_prop_time : 0.0010013580322265625
+den_time : 0.0
+grad_wy time : 0.005003690719604492
+grad_t time : 0.005007505416870117
+
+w_x time : 0.0
+f_prop_time : 0.0
+b_prop_time : 0.0
+den_time : 0.0
+grad_wy time : 0.0020003318786621094
+grad_t time : 0.0010046958923339844
+
+w_x time : 0.0009999275207519531
+f_prop_time : 0.0010035037994384766
+b_prop_time : 0.0010006427764892578
+den_time : 0.0
+grad_wy time : 0.0019998550415039062
+grad_t time : 0.0010039806365966797
+
+w_x time : 0.0
+f_prop_time : 0.002003192901611328
+b_prop_time : 0.002003908157348633
+den_time : 0.0
+grad_wy time : 0.006005764007568359
+grad_t time : 0.005007743835449219
+
+w_x time : 0.0
+f_prop_time : 0.0020072460174560547
+b_prop_time : 0.0020024776458740234
+den_time : 0.0
+grad_wy time : 0.004002571105957031
+grad_t time : 0.003004789352416992
+
+w_x time : 0.001003265380859375
+f_prop_time : 0.0010030269622802734
+b_prop_time : 0.002001523971557617
+den_time : 0.0
+grad_wy time : 0.004004240036010742
+grad_t time : 0.004008054733276367
+
+w_x time : 0.001003265380859375
+f_prop_time : 0.0
+b_prop_time : 0.0
+den_time : 0.0
+grad_wy time : 0.002002239227294922
+grad_t time : 0.0010008811950683594
+
+w_x time : 0.0010035037994384766
+f_prop_time : 0.0009992122650146484
+b_prop_time : 0.0010027885437011719
+den_time : 0.0
+grad_wy time : 0.003001689910888672
+grad_t time : 0.002003192901611328

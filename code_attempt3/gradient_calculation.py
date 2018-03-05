@@ -15,16 +15,10 @@ def forward_propogate(w_x, t):
     
     #iterate through length of word
     for i in range(1, word_len):
-        #iterate through each letter
-        for j in range(26):
-            #remember t[a] = [taa, tba, tca...] so this returns all previous values for the current value + the previous row
-            vect = M[i-1]+ t[j]
-            #get max
-            vect_max = np.max(vect)
-            #subtract max from vector
-            vect = vect - vect_max
-            #finally set the ith word position and jth letter to the max plus the log of the vector plus the current word's value
-            M[i][j] = vect_max + np.log(np.sum(np.exp(vect + w_x[i-1]))) 
+        vect = M[i-1] + t
+        vect_max = np.max(vect, axis = 1)
+        vect = (vect.transpose() - vect_max).transpose()
+        M[i] = vect_max + np.log(np.sum(np.exp(vect + w_x[i-1]), axis = 1))
             
     return M
 
@@ -39,11 +33,10 @@ def back_propogate(w_x, t):
     t_trans = t.transpose()
 
     for i in range(fin_index -1, -1, -1):
-        for j in range(26):
-            vect = M[i + 1] + t_trans[j]
-            vect_max = np.max(vect)
-            vect = vect - vect_max
-            M[i][j] = vect_max +np.log(np.sum(np.exp(vect + w_x[i+1]))) 
+        vect = M[i + 1] + t_trans
+        vect_max = np.max(vect, axis = 1)
+        vect = (vect.transpose() - vect_max).transpose()
+        M[i] = vect_max +np.log(np.sum(np.exp(vect + w_x[i+1]), axis =  1)) 
     return M
 
 
@@ -94,13 +87,15 @@ def t_matrix(params):
     
 def grad_wrt_wy(X, y, w_x, t, f_mess, b_mess, den):
     gradient = np.zeros(128 * 26)
-    for i in range(26):
+    for j in range(len(X)):
+    
         #add in terms that are equal
-        start = 128* i
-        end = 128 * (1 + i)
+
         
         #for each position subtract off the probability of the letter
-        for j in range(len(X)):
+        for i in range(26):
+            start = 128* i
+            end = 128 * (1 + i)
             if(y[j] == i):
                 gradient[start: end] += X[j]
                 
@@ -162,7 +157,7 @@ def gradient_word(X, y, w, t, word_num):
     
     return np.concatenate((wy_grad, t_grad))
     
-def avg_gradient(params, X, y, up_to_index, C):
+def avg_gradient(params, X, y, up_to_index):
     w = w_matrix(params)
     t = t_matrix(params)
         
@@ -178,7 +173,7 @@ def log_p_y_given_x(w_x, y, t, word_num):
     return np.log(numerator(y, w_x, t) / denominator(f_mess, w_x))
 
 
-def neg_avg_log_p_y_given_x(params, X, y, up_to_index, C):
+def avg_log_p_y_given_x(params, X, y, up_to_index):
     w = w_matrix(params)
     t = t_matrix(params)
         
@@ -188,7 +183,7 @@ def neg_avg_log_p_y_given_x(params, X, y, up_to_index, C):
         w_x = np.inner(X[i], w)
         count += 1
         total += log_p_y_given_x(w_x, y[i], t, i)
-    return  -1 * C * total / count
+    return  total / count
 
 
 
