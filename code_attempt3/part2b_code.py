@@ -43,6 +43,18 @@ def optimize(params, X, y, C, name):
             text_file.write(str(elt))
             text_file.write("\n")
 
+def accuracy(y_pred, y_act):
+    word_count = 0
+    correct_word_count = 0
+    letter_count = 0
+    correct_letter_count = 0
+    for i in range(len(y_pred)):
+        word_count += 1
+        correct_word_count += np.sum(y_pred[i] == y_act[i]) == len(y_pred[i])
+        letter_count += len(y_pred[i])
+        correct_letter_count += np.sum(y_pred[i] == y_act[i])
+    return correct_word_count/word_count, correct_letter_count/letter_count
+
 def get_optimal_params(name):
     
     file = open('../result/' + name + '.txt', 'r') 

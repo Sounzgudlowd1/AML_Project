@@ -20,13 +20,13 @@ X_train, y_train = gd.read_data_formatted('train')
 params = gd.get_params()
 
 
-p2b.optimize(params, X_train, y_train, 1000, 'solution')
+#p2b.optimize(params, X_train, y_train, 1000, 'solution')
 
 
 
-params = p2b.get_optimal_params()
-w = p1c.parse_w(params)
-t = p1c.parse_t(params)
+params = p2b.get_optimal_params('solution1000')
+w = gc.w_matrix(params)
+t = gc.t_matrix(params)
 
 
 
