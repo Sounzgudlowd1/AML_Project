@@ -30,9 +30,10 @@ def back_propogate(w_x, t):
     M = np.zeros((len(w_x), 26))
     #now we need taa, tab, tac... because we are starting at the end and working backwards
     #which is exactly the transposition of the t matrix
+    t_trans = t
 
     for i in range(fin_index -1, -1, -1):
-        vect = M[i + 1] + t
+        vect = M[i + 1] + t_trans
         vect_max = np.max(vect, axis = 1)
         vect = (vect.transpose() - vect_max).transpose()
         M[i] = vect_max +np.log(np.sum(np.exp(vect + w_x[i+1]), axis =  1)) 
@@ -41,11 +42,11 @@ def back_propogate(w_x, t):
 
 def num_letter(w_x, f_mess, b_mess, position, letter):
     factor = 0
-    if(position > 0):
-        factor += f_mess[position][letter]
+    #if(position > 0):
+    factor += f_mess[position][letter]
     
-    if(position < len(w_x) -1):
-        factor += b_mess[position][letter]
+    #if(position < len(w_x) -1):
+    factor += b_mess[position][letter]
         
     return np.exp(factor + w_x[position][letter])
 
@@ -85,22 +86,15 @@ def t_matrix(params):
     return t
     
 def grad_wrt_wy(X, y, w_x, t, f_mess, b_mess, den):
-    gradient = np.zeros(128 * 26)
-    for j in range(len(X)):
-    
-        #add in terms that are equal
+    gradient = np.zeros((26, 128))
+    for i in range(len(X)):
 
-        
+        gradient[y[i]] += X[i]
         #for each position subtract off the probability of the letter
-        for i in range(26):
-            start = 128* i
-            end = 128 * (1 + i)
-            if(y[j] == i):
-                gradient[start: end] += X[j]
-                
-            gradient[start : end] -= num_letter(w_x, f_mess, b_mess, j, i) / den * X[j]
-            
-    return gradient
+        temp = np.ones((26, 128)) * X[i]
+        temp = temp.transpose() * np.exp(f_mess[i] +  b_mess[i] + w_x[i])/ den 
+        gradient -= temp.transpose()
+    return gradient.flatten()
     
 def grad_wrt_t(y, w_x, t, f_mess, b_mess, den):
     gradient = np.zeros(26 * 26)
@@ -111,7 +105,7 @@ def grad_wrt_t(y, w_x, t, f_mess, b_mess, den):
     gradient /= den
                 
     for i in range(len(w_x) - 1):
-        t_index =  y[i]
+        t_index = y[i]
         t_index += 26 * y[i+1]
         gradient[t_index] += 1        
         

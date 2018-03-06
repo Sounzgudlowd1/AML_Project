@@ -11,18 +11,19 @@ from scipy.optimize import fmin_bfgs
 from time import time
 import numpy as np
 import winsound
+import part1c_code as p1c
 
 def func_to_minimize(params, X, y, C):
     num_examples = len(X)
     reg = 1/2 * np.sum(params ** 2)
-    sum_prob = gc.log_p_y_given_x_sum(params, X, y, num_examples)
-    return -C/len(X) * sum_prob + reg
+    avg_prob = gc.log_p_y_given_x_avg(params, X, y, num_examples)
+    return -C * avg_prob + reg
 
 def grad_func(params, X, y, C):
     num_examples = len(X)
-    grad_sum =  gc.gradient_sum(params, X, y, num_examples)
+    grad_avg =  gc.gradient_avg(params, X, y, num_examples)
     grad_reg = params
-    return -C/len(X) * grad_sum + grad_reg
+    return -C * grad_avg + grad_reg
     
 
 def optimize(params, X, y, C, name):
@@ -51,3 +52,9 @@ def get_optimal_params():
         params.append(float(elt))
     return np.array(params)
 
+def predict(X, w, t):
+    y_pred = []
+    for i, x in enumerate(X):
+        M = p1c.optimize(x, w, t)
+        y_pred.append(p1c.get_solution_from_M(M, x, w, t))
+    return y_pred

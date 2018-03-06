@@ -13,12 +13,7 @@ import time
     
 #parameter set for 2a
 
-def predict(X, w, t):
-    y_pred = []
-    for i, x in enumerate(X):
-        M = p1c.optimize(x, w, t)
-        y_pred.append(p1c.get_solution_from_M(M, x, w, t))
-    return y_pred
+
 
 X_test, y_test = gd.read_data_formatted('test')
 X_train, y_train = gd.read_data_formatted('train')
@@ -39,7 +34,7 @@ t = p1c.parse_t(params)
 
 print(p2b.func_to_minimize(params, X_train, y_train, 1000))
 
-y_pred = predict(X_test, w, t)
+y_pred = p2b.predict(X_test, w, t)
 
 
 with open("../result/prediction.txt", "w") as text_file:
@@ -47,4 +42,4 @@ with open("../result/prediction.txt", "w") as text_file:
         text_file.write(str(elt))
         text_file.write("\n")  
         
-print(accuracy(y_pred, y_test))
+print(p2b.accuracy(y_pred, y_test))

@@ -5,6 +5,8 @@ Created on Mon Mar  5 14:23:15 2018
 @author: Erik
 """
 
+import numpy as np
+
 def accuracy(y_pred, y_act):
     word_count = 0
     correct_word_count = 0
