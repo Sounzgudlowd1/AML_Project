@@ -15,18 +15,16 @@ def check_gradient(params, X, y):
     #kind of like a unit test.  Just check the gradient of the first 10 words
     #this takes a while so be forwarned
     print(check_grad(
-            gc.log_p_y_given_x_sum, 
-            gc.gradient_sum, 
-            params, X, y, 20))
-    
-def avg_log_prob(params, X, y):
-    return gc.log_p_y_given_x_sum(params, X, y, len(X)) / len(X)    
+            gc.log_p_y_given_x_avg, 
+            gc.gradient_avg, 
+            params, X, y, 10))
+
 
 
 def timed_gradient_calculation(params, X, y):
     #this takes 621 seconds for me (10 min 21 seconds)
     start = time()
-    av_grad = gc.gradient_sum(params, X, y, len(X))/len(X)
+    av_grad = gc.gradient_avg(params, X, y, len(X))
     print("Total time:")
     print(time() - start)
     
@@ -41,7 +39,7 @@ def timed_gradient_calculation(params, X, y):
 X, y = gd.read_data_formatted('train')
 params = gd.get_params()
 
-print(gc.log_p_y_given_x_sum(params, X, y, len(X)) / len(X))
+print(gc.log_p_y_given_x_avg(params, X, y, len(X)) )
 
 check_gradient(params, X, y)
 
