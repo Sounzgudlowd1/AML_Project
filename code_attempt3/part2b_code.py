@@ -40,7 +40,6 @@ def optimize(params, X, y, C, name):
     
     with open("../result/" + name + ".txt", "w") as text_file:
         for i, elt in enumerate(out):
-            print(i)
             text_file.write(str(elt))
             text_file.write("\n")
 
