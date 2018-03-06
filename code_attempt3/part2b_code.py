@@ -43,9 +43,9 @@ def optimize(params, X, y, C, name):
             text_file.write(str(elt))
             text_file.write("\n")
 
-def get_optimal_params():
+def get_optimal_params(name):
     
-    file = open('../result/solution.txt', 'r') 
+    file = open('../result/' + name + '.txt', 'r') 
     params = []
     for i, elt in enumerate(file):
         params.append(float(elt))
