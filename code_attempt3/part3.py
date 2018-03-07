@@ -9,14 +9,14 @@ import gradient_calculation as gc
 import get_data as gd
 import part2b_code as p2b
 
-X_train, y_train = gd.read_data_formatted('train')
-X_test, y_test = gd.read_data_formatted('test')
+X_train, y_train = gd.read_data_formatted('train_struct.txt')
+X_test, y_test = gd.read_data_formatted('test_struct.txt')
 params = gd.get_params()
 
 
 
 
-#Run optimization
+#Run optimization, should take 3+ hours so commented out.
 '''
 cvals = [1, 10, 100, 1000]
 
@@ -36,3 +36,5 @@ for elt in cvals:
     prediction = p2b.predict(X_test, w, t)
     print("Accuracy for: " + str(elt))
     print(p2b.accuracy(prediction, y_test))
+    
+    

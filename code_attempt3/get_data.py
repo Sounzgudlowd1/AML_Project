@@ -9,7 +9,7 @@ import re
 
 
 def read_data(file_name):
-    file = open('../data/' + file_name + '_struct.txt', 'r') 
+    file = open('../data/' + file_name , 'r') 
     y = []
     qids = []
     X = []

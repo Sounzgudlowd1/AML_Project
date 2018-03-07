@@ -15,31 +15,31 @@ import time
 
 
 
-X_test, y_test = gd.read_data_formatted('test')
-X_train, y_train = gd.read_data_formatted('train')
+X_test, y_test = gd.read_data_formatted('test_struct.txt')
+X_train, y_train = gd.read_data_formatted('train_struct.txt')
 params = gd.get_params()
 
+#run optimization.  For C= 1000 it takes about an hour so just read params and predict
+p2b.optimize(params, X_train, y_train, 1000, 'solution')
 
-#p2b.optimize(params, X_train, y_train, 1000, 'solution')
 
 
-
-params = p2b.get_optimal_params('solution1000')
+params = p2b.get_optimal_params('solution')
 w = gc.w_matrix(params)
 t = gc.t_matrix(params)
 
 
 
 
-
+print("Function value: ")
 print(p2b.func_to_minimize(params, X_train, y_train, 1000))
 
-y_pred = p2b.predict(X_test, w, t)
 
+y_pred = p2b.predict(X_test, w, t)
 
 with open("../result/prediction.txt", "w") as text_file:
     for i, elt in enumerate(y_pred):
         text_file.write(str(elt))
         text_file.write("\n")  
-        
-print(p2b.accuracy(y_pred, y_test))
+
+print(p2b.accuracy(y_pred[:1], y_test[:1]))

@@ -37,7 +37,7 @@ def timed_gradient_calculation(params, X, y):
 #print(gc.gradient_avg(params, X, y, 1)[0: 50])
 
 
-X, y = gd.read_data_formatted('train')
+X, y = gd.read_data_formatted('train_struct.txt')
 params = gd.get_params()
 
 #print(gc.log_p_y_given_x_avg(params, X, y, len(X)) )
