@@ -20,11 +20,11 @@ X_train, y_train = gd.read_data_formatted('train_struct.txt')
 params = gd.get_params()
 
 #run optimization.  For C= 1000 it takes about an hour so just read params and predict
-p2b.optimize(params, X_train, y_train, 1000, 'solution')
+#p2b.optimize(params, X_train, y_train, 1000, 'solution')
 
 
 
-params = p2b.get_optimal_params('solution')
+params = p2b.get_optimal_params('solution1000')
 w = gc.w_matrix(params)
 t = gc.t_matrix(params)
 
@@ -42,4 +42,4 @@ with open("../result/prediction.txt", "w") as text_file:
         text_file.write(str(elt))
         text_file.write("\n")  
 
-print(p2b.accuracy(y_pred[:1], y_test[:1]))
+print(p2b.accuracy(y_pred, y_test))
