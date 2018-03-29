@@ -42,10 +42,8 @@ def back_propogate(w_x, t):
 
 def num_letter(w_x, f_mess, b_mess, position, letter):
     factor = 0
-    #if(position > 0):
     factor += f_mess[position][letter]
     
-    #if(position < len(w_x) -1):
     factor += b_mess[position][letter]
         
     return np.exp(factor + w_x[position][letter])

@@ -9,7 +9,6 @@ import get_data as gd
 import gradient_calculation as gc
 import part2b_code as p2b
 import part1c_code as p1c
-import time
     
 #parameter set for 2a
 
@@ -20,7 +19,7 @@ X_train, y_train = gd.read_data_formatted('train_struct.txt')
 params = gd.get_params()
 
 #run optimization.  For C= 1000 it takes about an hour so just read params and predict
-#p2b.optimize(params, X_train, y_train, 1000, 'solution')
+p2b.optimize(params, X_train, y_train, 1000, 'solution')
 
 
 
